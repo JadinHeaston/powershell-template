@@ -1,43 +1,43 @@
-function Load-Env {
-	param (
-		[string]$Path = "$PSScriptRoot\.env",
-		[switch]$Debug
-	)
+# Template Functions
+{
+	function Import-Env {
 
-	if (-Not (Test-Path $Path)) {
-		Write-Warning "The .env file was not found at path: $Path"
-		return
-	}
-	else {
-		if ($Debug) {
-			Write-Host "Loading .env: $Path"
-		}
-	}
+		[CmdletBinding()]
+		param (
+			[string]$Path = "$PSScriptRoot\.env"
+		)
 
-	$lines = Get-Content -Path $Path
-
-	foreach ($line in $lines) {
-		$trimmed = $line.Trim()
-
-		# Skip empty lines and comments
-		if ([string]::IsNullOrWhiteSpace($trimmed) -or $trimmed.StartsWith('#')) {
-			continue
-		}
-
-		# Match KEY=VALUE format
-		if ($trimmed -match '^\s*([^=]+?)\s*=\s*(.*)$') {
-			$key = $matches[1].Trim()
-			$value = $matches[2].Trim(' "')
-
-			# Set environment variable for current session
-			[System.Environment]::SetEnvironmentVariable($key, $value, 'Process')
-			if ($Debug) {
-				Write-Host "Set $key"
-			}
+		if (-Not (Test-Path $Path)) {
+			Write-Warning "The .env file was not found at path: $Path"
+			return
 		}
 		else {
-			if ($Debug) {
-				Write-Warning "Skipping invalid line: $line"
+			Write-Verbose "Loading .env: $Path"
+		}
+
+		$lines = Get-Content -Path $Path
+
+		foreach ($line in $lines) {
+			$trimmed = $line.Trim()
+
+			# Skip empty lines and comments
+			if ([string]::IsNullOrWhiteSpace($trimmed) -or $trimmed.StartsWith('#')) {
+				continue
+			}
+
+			# Match KEY=VALUE format
+			if ($trimmed -match '^\s*([^=]+?)\s*=\s*(.*)$') {
+				$key = $matches[1].Trim()
+				$value = $matches[2].Trim(' "')
+
+				# Set environment variable for current session
+				[System.Environment]::SetEnvironmentVariable($key, $value, 'Process')
+				Write-Verbose "Set $key"
+			}
+			else {
+				if ($Debug) {
+					Write-Warning "Skipping invalid line: $line"
+				}
 			}
 		}
 	}
