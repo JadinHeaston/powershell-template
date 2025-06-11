@@ -1,7 +1,8 @@
 # Template Functions
 {
 	function Import-Env {
-
+		# Print Environment Variables: Get-ChildItem env:
+		
 		[CmdletBinding()]
 		param (
 			[string]$Path = "$PSScriptRoot\.env"
@@ -45,3 +46,6 @@
 
 # Loading .env variable
 Import-Env
+
+## ----- Script ----- ##
+
