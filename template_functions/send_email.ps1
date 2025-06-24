@@ -23,7 +23,7 @@ function Send-Email {
 	}
 
 	# Important if the certificate is self-signed or causing problems.
-	if ($false -eq ([bool]$Env:SMTP_VALIDATE_CERTIFICATE)) {
+	if ($false -eq [System.Convert]::ToBoolean($Env:SMTP_VALIDATE_CERTIFICATE)) {
 		[System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
 	}
 
